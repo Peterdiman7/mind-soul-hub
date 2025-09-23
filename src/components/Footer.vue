@@ -4,34 +4,26 @@
       <div class="footer-section brand-section">
         <div class="brand">
           <span class="icon">🧠</span>
-          <span class="name">Mindful Waves</span>
+          <span class="name">Mind Soul Hub</span>
         </div>
         <p class="tagline">Where mental wellness meets mindful living</p>
-        <div class="social-links">
-          <a href="#" class="social-link" aria-label="Facebook">📘</a>
-          <a href="#" class="social-link" aria-label="Twitter">🐦</a>
-          <a href="#" class="social-link" aria-label="Instagram">📷</a>
-          <a href="#" class="social-link" aria-label="LinkedIn">💼</a>
-        </div>
       </div>
 
       <div class="footer-section">
         <h4>Explore</h4>
         <ul>
-          <li><RouterLink to="/categories">Browse Topics</RouterLink></li>
-          <li><RouterLink to="/articles">Psychology Articles</RouterLink></li>
-          <li><RouterLink to="/meditations">Guided Meditations</RouterLink></li>
-          <li><RouterLink to="/plans">Wellness Plans</RouterLink></li>
-        </ul>
-      </div>
-
-      <div class="footer-section">
-        <h4>Resources</h4>
-        <ul>
-          <li><a href="#" @click="openCrisisHelp">Crisis Support</a></li>
-          <li><a href="#" @click="openTherapistFinder">Find a Therapist</a></li>
-          <li><a href="#" @click="openSelfAssessment">Mental Health Assessment</a></li>
-          <li><a href="#" @click="openWellnessTools">Wellness Tools</a></li>
+          <li>
+            <RouterLink to="/topics">Browse Topics</RouterLink>
+          </li>
+          <li>
+            <RouterLink to="/articles">Psychology Articles</RouterLink>
+          </li>
+          <li>
+            <RouterLink to="/meditations">Guided Meditations</RouterLink>
+          </li>
+          <li>
+            <RouterLink to="/plans">Wellness Plans</RouterLink>
+          </li>
         </ul>
       </div>
 
@@ -48,8 +40,8 @@
       <div class="footer-section">
         <h4>Legal</h4>
         <ul>
-          <li><a href="#" @click="openTerms">Terms & Conditions</a></li>
-          <li><a href="#" @click="openPrivacy">Privacy Policy</a></li>
+          <li><a href="#" @click="navigate('terms-conditions')">Terms & Conditions</a></li>
+          <li><a href="#" @click="navigate('privacy-policy')">Privacy Policy</a></li>
           <li><a href="#" @click="openEthics">Ethical Guidelines</a></li>
           <li><a href="#" @click="openDisclaimer">Medical Disclaimer</a></li>
         </ul>
@@ -59,12 +51,7 @@
         <h4>Newsletter</h4>
         <p>Get weekly mental health tips and mindfulness practices</p>
         <form class="newsletter-form" @submit.prevent="subscribeNewsletter">
-          <input 
-            type="email" 
-            placeholder="Enter your email"
-            v-model="email"
-            required
-          />
+          <input type="email" placeholder="Enter your email" v-model="email" required />
           <button type="submit">🌟 Subscribe</button>
         </form>
       </div>
@@ -72,61 +59,28 @@
 
     <div class="footer-bottom">
       <div class="footer-bottom-content">
-        <p>&copy; 2025 Mindful Waves. All rights reserved.</p>
+        <p>&copy; 2025 Mind Soul Hub. All rights reserved.</p>
         <p class="disclaimer">
-          This platform provides educational content only and is not a substitute for professional mental health treatment.
+          This platform provides educational content only and is not a substitute for professional mental health
+          treatment.
         </p>
         <div class="crisis-notice">
-          <p><strong>Crisis Support:</strong> If you're experiencing a mental health emergency, please contact emergency services or call 988 (Suicide & Crisis Lifeline).</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Terms & Conditions Modal -->
-    <div v-if="showTermsModal" class="modal-overlay" @click="closeModal">
-      <div class="modal" @click.stop>
-        <div class="modal-header">
-          <h3>Terms & Conditions</h3>
-          <button class="close-btn" @click="closeModal">&times;</button>
-        </div>
-        <div class="modal-content">
-          <h4>1. Acceptance of Terms</h4>
-          <p>By using Mindful Waves, you agree to be bound by these Terms and Conditions and acknowledge that this platform provides educational content only.</p>
-          
-          <h4>2. Educational Content Disclaimer</h4>
-          <p>All content on Mindful Waves is for educational and informational purposes only. It is not intended as a substitute for professional mental health treatment, diagnosis, or advice.</p>
-          
-          <h4>3. Mental Health Services</h4>
-          <p>Our subscription services provide access to educational articles and guided meditations. We do not provide therapy, counseling, or medical services.</p>
-          
-          <h4>4. User Responsibilities</h4>
-          <p>Users must seek professional help for serious mental health concerns and not rely solely on platform content for treatment decisions.</p>
-          
-          <h4>5. Privacy and Confidentiality</h4>
-          <p>We protect user privacy according to our Privacy Policy. However, users should be aware that online communications are not completely secure.</p>
-          
-          <h4>6. Crisis Situations</h4>
-          <p>This platform is not equipped to handle mental health emergencies. Users experiencing crisis situations should contact emergency services immediately.</p>
-          
-          <h4>7. Content Accuracy</h4>
-          <p>While we strive for accuracy, mental health is complex and individualized. Content may not apply to all situations or conditions.</p>
-          
-          <h4>8. Limitation of Liability</h4>
-          <p>Mindful Waves shall not be liable for any decisions made based on platform content or for any outcomes related to mental health treatment.</p>
-          
-          <p class="effective-date"><strong>Effective Date:</strong> September 16, 2025</p>
+          <p><strong>Crisis Support:</strong> If you're experiencing a mental health emergency, please contact emergency
+            services or call 988 (Suicide & Crisis Lifeline).</p>
         </div>
       </div>
     </div>
   </footer>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
+
+import { RouterLink, useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const email = ref('')
-const showTermsModal = ref(false)
 
 function subscribeNewsletter() {
   if (email.value) {
@@ -135,12 +89,8 @@ function subscribeNewsletter() {
   }
 }
 
-function openTerms() {
-  showTermsModal.value = true
-}
-
-function closeModal() {
-  showTermsModal.value = false
+const navigate = (name: string) => {
+  router.push({ name })
 }
 
 function openPrivacy() {
@@ -173,10 +123,6 @@ function openFeedback() {
 
 function openCrisisHelp() {
   alert('Crisis Support Resources:\n\n• National Suicide Prevention Lifeline: 988\n• Crisis Text Line: Text HOME to 741741\n• National Domestic Violence Hotline: 1-800-799-7233\n\nIf you\'re in immediate danger, please call 911.')
-}
-
-function openTherapistFinder() {
-  alert('Find a Therapist: Use our directory to locate licensed mental health professionals in your area. This feature helps connect you with qualified therapists and counselors.')
 }
 
 function openSelfAssessment() {

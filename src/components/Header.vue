@@ -1,183 +1,253 @@
 <template>
-  <header class="header">
-    <div class="container">
-      <div class="brand">
-        <RouterLink to="/" class="logo">
-          <span class="icon">🧠</span>
-          Mindful Waves
-        </RouterLink>
-      </div>
-      
-      <nav class="nav">
-        <RouterLink to="/" class="nav-link">Home</RouterLink>
-        <RouterLink to="/categories" class="nav-link">Browse Topics</RouterLink>
-        <RouterLink to="/articles" class="nav-link">Articles</RouterLink>
-        <RouterLink to="/meditations" class="nav-link">Meditations</RouterLink>
-        <RouterLink to="/plans" class="nav-link">Plans</RouterLink>
-        <RouterLink to="/login" class="nav-link login-btn">Sign In</RouterLink>
-      </nav>
+  <header class="site-header">
+    <nav class="nav">
+      <router-link to="/" class="logo" @click="closeMenu">
+        <span class="logo-icon">🧠</span>
+        <span class="logo-text">Mind Soul Hub</span>
+      </router-link>
+      <ul class="nav-links" :class="{ open: menuOpen }">
+        <li>
+          <router-link to="/" @click="closeMenu" class="nav-link">
+            <span class="link-icon">🏠</span> Home
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/topics" @click="closeMenu" class="nav-link">
+            <span class="link-icon">📚</span> Browse Topics
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/articles" @click="closeMenu" class="nav-link">
+            <span class="link-icon">📰</span> Articles
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/meditations" @click="closeMenu" class="nav-link">
+            <span class="link-icon">🧘</span> Meditations
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/plans" @click="closeMenu" class="nav-link">
+            <span class="link-icon">💪</span> Plans
+          </router-link>
+        </li>
+        <li v-if="!loggedIn">
+          <router-link to="/login" @click="closeMenu" class="nav-link">
+            <span class="link-icon">🔑</span> Login
+          </router-link>
+        </li>
+        <li v-else>
+          <button class="nav-link logout-btn" @click="logout">
+            <span class="link-icon">🚪</span> Logout
+          </button>
+        </li>
+      </ul>
 
-      <button class="mobile-menu-btn" @click="toggleMobileMenu">
-        <span></span>
-        <span></span>
-        <span></span>
+      <!-- Hamburger Button -->
+      <button class="menu-toggle" @click="toggleMenu" :aria-expanded="menuOpen.toString()" aria-label="Toggle menu">
+        <span :class="{ open: menuOpen }"></span>
+        <span :class="{ open: menuOpen }"></span>
+        <span :class="{ open: menuOpen }"></span>
       </button>
-
-      <div class="mobile-menu" :class="{ active: isMobileMenuOpen }">
-        <RouterLink to="/" class="mobile-nav-link" @click="closeMobileMenu">Home</RouterLink>
-        <RouterLink to="/categories" class="mobile-nav-link" @click="closeMobileMenu">Browse Topics</RouterLink>
-        <RouterLink to="/articles" class="mobile-nav-link" @click="closeMobileMenu">Articles</RouterLink>
-        <RouterLink to="/meditations" class="mobile-nav-link" @click="closeMobileMenu">Meditations</RouterLink>
-        <RouterLink to="/plans" class="mobile-nav-link" @click="closeMobileMenu">Plans</RouterLink>
-        <RouterLink to="/login" class="mobile-nav-link login-btn" @click="closeMobileMenu">Sign In</RouterLink>
-      </div>
-    </div>
+    </nav>
   </header>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
+<script setup lang="ts">
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useRouter } from 'vue-router'
 
-const isMobileMenuOpen = ref(false)
+const router = useRouter()
+const menuOpen = ref(false)
+const loggedIn = ref(sessionStorage.getItem("loggedIn") === "true")
 
-function toggleMobileMenu() {
-  isMobileMenuOpen.value = !isMobileMenuOpen.value
+const toggleMenu = () => {
+  menuOpen.value = !menuOpen.value
+  document.body.style.overflow = menuOpen.value ? "hidden" : ""
 }
 
-function closeMobileMenu() {
-  isMobileMenuOpen.value = false
+const closeMenu = () => {
+  menuOpen.value = false
+  document.body.style.overflow = ""
+}
+
+const handleResize = () => {
+  if (window.innerWidth > 768) closeMenu()
+}
+
+onMounted(() => {
+  window.addEventListener("resize", handleResize)
+  window.addEventListener("storage", syncLoginState)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener("resize", handleResize)
+  window.removeEventListener("storage", syncLoginState)
+})
+
+const logout = () => {
+  sessionStorage.removeItem("loggedIn")
+  loggedIn.value = false
+  router.push("/login")
+}
+
+const syncLoginState = () => {
+  loggedIn.value = sessionStorage.getItem("loggedIn") === "true"
 }
 </script>
 
 <style scoped>
-.header {
+/* ===== Header Layout ===== */
+.site-header {
+  width: 100%;
   background: linear-gradient(135deg, #0f766e, #14b8a6);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
-  z-index: 1000;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 70px;
-}
-
-.brand .logo {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  text-decoration: none;
-  color: white;
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.icon {
-  font-size: 1.2rem;
+  z-index: 200;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .nav {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 1rem 2rem;
+}
+
+/* ===== Logo ===== */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: white;
+  text-decoration: none;
+}
+
+.logo-icon {
+  font-size: 2rem;
+}
+
+.logo-text {
+  font-family: "Quicksand", sans-serif;
+  font-weight: 700;
+}
+
+/* ===== Nav Links ===== */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
 }
 
 .nav-link {
-  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
   text-decoration: none;
+  color: white;
   font-weight: 500;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
+  font-size: 1rem;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
   transition: all 0.3s ease;
 }
 
-.nav-link:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-1px);
-}
-
+.nav-link:hover,
 .nav-link.router-link-active {
   background: rgba(255, 255, 255, 0.2);
 }
 
-.login-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+.logout-btn {
+  cursor: pointer;
 }
 
-.login-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.mobile-menu-btn {
+/* ===== Hamburger Button ===== */
+.menu-toggle {
   display: none;
   flex-direction: column;
-  gap: 4px;
+  justify-content: space-between;
+  width: 28px;
+  height: 22px;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0.5rem;
+  padding: 0;
+  z-index: 300;
 }
 
-.mobile-menu-btn span {
-  width: 25px;
+.menu-toggle span {
+  display: block;
   height: 3px;
+  width: 100%;
   background: white;
-  border-radius: 3px;
+  border-radius: 2px;
   transition: all 0.3s ease;
 }
 
-.mobile-menu {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: linear-gradient(135deg, #0f766e, #14b8a6);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  flex-direction: column;
-  padding: 1rem 2rem;
+.menu-toggle span.open:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 6px);
 }
 
-.mobile-menu.active {
-  display: flex;
+.menu-toggle span.open:nth-child(2) {
+  opacity: 0;
 }
 
-.mobile-nav-link {
-  color: white;
-  text-decoration: none;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  font-weight: 500;
-  transition: all 0.3s ease;
+.menu-toggle span.open:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
 }
 
-.mobile-nav-link:hover {
-  color: #99f6e4;
-}
-
-.mobile-nav-link:last-child {
-  border-bottom: none;
-}
-
-@media (max-width: 768px) {
-  .nav {
-    display: none;
-  }
-
-  .mobile-menu-btn {
+/* ===== Mobile Styles ===== */
+@media (max-width: 1178px) {
+  .menu-toggle {
     display: flex;
   }
 
-  .container {
-    padding: 0 1rem;
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    background: linear-gradient(135deg, #0f766e, #14b8a6);
+    width: 80%;
+    max-width: 320px;
+    height: 100vh;
+    padding: 5rem 1.5rem 2rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .nav-links.open {
+    transform: translateX(0);
+  }
+
+  .nav-links li {
+    width: 100%;
+  }
+
+  .nav-link {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 1rem 1.2rem;
+    border-radius: 8px;
+  }
+}
+
+/* Extra Small Devices */
+@media (max-width: 480px) {
+  .logo-text {
+    display: none;
+  }
+
+  .nav-links {
+    width: 100%;
+    max-width: none;
   }
 }
 </style>

@@ -24,7 +24,7 @@
 
     <section class="features">
       <div class="container">
-        <h2>Why Choose Mindful Waves?</h2>
+        <h2>Why Choose Mind Soul Hub?</h2>
         <div class="features-grid">
           <div class="feature">
             <div class="feature-icon">📚</div>
