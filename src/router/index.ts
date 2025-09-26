@@ -104,7 +104,7 @@ const createRouter = () => {
         let loggedIn = false
 
         try {
-            const res = await fetch("http://localhost:3000/auth/me", {
+            const res = await fetch("http://back.mindsoulhub.com/auth/me", {
                 credentials: "include"
             })
             loggedIn = res.ok

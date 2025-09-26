@@ -47,7 +47,7 @@ const register = async () => {
     success.value = ""
 
     try {
-        const response = await fetch("http://localhost:3000/auth/register", {
+        const response = await fetch("http://back.mindsoulhub.com/auth/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

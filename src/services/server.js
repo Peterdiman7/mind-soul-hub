@@ -6,25 +6,38 @@ import jwt from "jsonwebtoken"
 import cookieParser from "cookie-parser"
 import dotenv from "dotenv"
 
-dotenv.config() // load .env variables first
+dotenv.config()
 
 const app = express()
 
-// ---- MIDDLEWARE ----
+// CORS configuration
+const allowedOrigins = [
+    "https://mindsoulhub.com",
+    "http://localhost:9001",
+    "http://localhost:5173"
+]
+
 app.use(cors({
-    origin: "http://localhost:5173", // replace with your frontend origin
-    credentials: true                // allow cookies to be sent
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, origin)
+        } else {
+            callback(new Error("Not allowed by CORS"))
+        }
+    },
+    credentials: true
 }))
+
 app.use(express.json())
 app.use(cookieParser())
 
 // ---- MYSQL CONNECTION ----
 const conn = await mysql.createConnection({
-    host: process.env.DB_HOST || "127.0.0.1",
-    user: process.env.DB_USER || "mindsoulhub",
-    port: Number(process.env.DB_PORT) || 3307,
-    password: process.env.DB_PASS || "svs466dR__F",
-    database: process.env.DB_NAME || "mindsoulhub"
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER
+    port: Number(process.env.DB_PORT) || 3306,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME
 })
 
 // ---- JWT SECRET ----
@@ -122,6 +135,6 @@ app.post("/auth/logout", (req, res) => {
 })
 
 // ---- START SERVER ----
-app.listen(3000, () => {
-    console.log("API running on http://localhost:3000")
+app.listen(9101, () => {
+    console.log("API running on http://localhost:9101")
 })
