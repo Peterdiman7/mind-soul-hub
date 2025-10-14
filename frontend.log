@@ -1,0 +1,7 @@
+nohup: ignoring input
+
+> mind-soul-hub@0.0.0 preview
+> vite preview --port 9001
+
+  ➜  Local:   http://localhost:9001/
+  ➜  Network: use --host to expose
